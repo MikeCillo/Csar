@@ -1,0 +1,20 @@
+externus functio scribe_int(integer x) -> nullum .
+
+functio calcolo_inutile() -> integer {
+    integer a : 10 .
+    integer b : 20 .
+    integer c : a + b .  // LLVM deve capire che c è 30
+    redde c .
+}
+
+principalis {
+    integer ris .
+
+    // Questo IF è sempre falso, LLVM dovrebbe cancellare tutto il blocco THEN
+    si (falsum) {
+        scribe_int(9999) .
+    } aliter {
+        ris : calcolo_inutile() .
+        scribe_int(ris) .
+    }
+}

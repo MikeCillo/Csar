@@ -1,0 +1,70 @@
+externus functio scribe_int(integer x) -> nullum .
+externus functio scribe_char(littera c) -> nullum .
+externus functio legge_int() -> integer .
+externus functio legge_char() -> littera .
+
+functio somma(integer a, integer b) -> integer {
+    redde a + b .
+}
+
+functio moltiplica(integer a, integer b) -> integer {
+    redde a * b .
+}
+
+functio divisione_sicura(integer a, integer b) -> integer {
+    si (b :: 0) {
+        // Errore: !
+        scribe_char('!') .
+        redde 0 .
+    } aliter {
+        redde a / b .
+    }
+}
+
+principalis {
+    littera scelta : ' ' .
+    integer op1 .
+    integer op2 .
+    integer ris .
+    boolianus continua : verum .
+
+    dom (continua) {
+        // Prompt Operazione: ?
+        scribe_char('?') .
+        scelta : legge_char() .
+
+        si (scelta :: 'q') {
+            continua : falsum .
+        } aliter {
+            // Prompt A
+            scribe_char('A') .
+            op1 : legge_int() .
+
+            // Prompt B
+            scribe_char('B') .
+            op2 : legge_int() .
+
+            si (scelta :: '+') {
+                ris : somma(op1, op2) .
+            } aliter {
+                si (scelta :: '*') {
+                    ris : moltiplica(op1, op2) .
+                } aliter {
+                    si (scelta :: '-') {
+                        ris : op1 - op2 .
+                    } aliter {
+                        si (scelta :: '/') {
+                            ris : divisione_sicura(op1, op2) .
+                        } aliter {
+                            ris : 0 .
+                        }
+                    }
+                }
+            }
+
+            // Output =
+            scribe_char('=') .
+            scribe_int(ris) .
+        }
+    }
+}
