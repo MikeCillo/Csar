@@ -1,0 +1,12 @@
+
+// Strong Typing somma di integer e bolianus
+
+principalis {
+    integer x : 5.
+    boolianus y : verum.
+    integer errore : 0.
+
+
+    errore : x + y.
+
+}

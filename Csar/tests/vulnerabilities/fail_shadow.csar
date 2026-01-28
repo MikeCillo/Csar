@@ -1,0 +1,14 @@
+
+//  Prevenzione Shadowing
+
+// 1. Definiamo una funzione globale
+functio saluta() -> nullum {
+    redde.
+}
+
+principalis {
+    // Stiamo provando a dichiarare una variabile locale con lo stesso nome
+
+    integer saluta : 10.
+
+}

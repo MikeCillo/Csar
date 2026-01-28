@@ -1,0 +1,90 @@
+// ==========================================
+// GRAMMATICA CSAR (Lark)
+// ==========================================
+
+start: program
+
+// --- STRUTTURA ---
+program: external_decl_list function_decl_list main_block
+
+external_decl_list: external_decl*
+function_decl_list: function_decl*
+
+// --- DICHIARAZIONI ---
+external_decl: "externus" "functio" ID "(" param_list? ")" arrow return_type "."
+
+function_decl: "functio" ID "(" param_list? ")" arrow return_type block
+
+main_block: "principalis" block
+
+// --- PARAMETRI ---
+param_list: param ("," param)*
+param: type ID
+
+// --- TIPI E FRECCIA ---
+arrow: "->"
+return_type: type | TYPE_NULL
+type: TYPE_INT | TYPE_CHAR | TYPE_BOOL
+
+// --- BLOCCO ---
+block: "{" var_decl_list stmt_list "}"
+var_decl_list: var_decl_stmt*
+stmt_list: stmt*
+
+// --- ISTRUZIONI ---
+stmt: assign_stmt | if_stmt | while_stmt | return_stmt | proc_call_stmt | block
+
+var_decl_stmt: type ID optional_init "."
+optional_init: (":" expr)?
+
+assign_stmt: ID ":" expr "."
+
+if_stmt: "si" "(" expr ")" block else_block?
+else_block: "aliter" block
+
+while_stmt: "dom" "(" expr ")" block
+
+return_stmt: "redde" expr? "."
+
+proc_call_stmt: ID "(" args_list? ")" "."
+
+// --- ESPRESSIONI ---
+?expr: logic_or
+?logic_or: logic_and ("||" logic_and)*
+?logic_and: comp_expr ("&&" comp_expr)*
+?comp_expr: sum_expr (comp_op sum_expr)*
+?sum_expr: term_expr (add_op term_expr)*
+?term_expr: factor (mul_op factor)*
+
+?factor: "(" expr ")"
+       | ID             -> var_expr
+       | NUMBER         -> number_expr
+       | CHAR           -> char_expr
+       | "verum"        -> bool_true
+       | "falsum"       -> bool_false
+       | TYPE_NULL      -> null_expr // FIX: Usa il token
+       | fun_call       -> fun_call_expr
+
+fun_call: ID "(" args_list? ")"
+args_list: expr ("," expr)*
+
+// --- OPERATORI ---
+!comp_op: "::" | "!=" | "<=" | ">=" | "<" | ">"
+!add_op: "+" | "-"
+!mul_op: "*" | "/"
+
+// --- TOKEN DEFINIZIONI ---
+
+TYPE_INT: "integer"
+TYPE_CHAR: "littera"
+TYPE_BOOL: "boolianus"
+TYPE_NULL: "nullum"
+
+ID: /[a-zA-Z][a-zA-Z0-9_]*/
+NUMBER: /[0-9]+/
+CHAR: /'([^'\\\n]|\\.)'/
+
+%import common.WS
+%ignore WS
+COMMENT: /\/\/[^\n]*/
+%ignore COMMENT

@@ -1,0 +1,13 @@
+
+// Isolamento dello Scope Locale
+
+functio segreta() -> nullum {
+    integer codice : 1234.
+}
+
+principalis {
+    // la variabile 'codice' non è accessibile qui
+    integer x : codice.
+
+
+}

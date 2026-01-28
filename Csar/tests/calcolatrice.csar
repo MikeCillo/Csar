@@ -1,0 +1,56 @@
+// DICHIARAZIONI ESTERNE
+externus functio scribe_int(integer x) -> nullum.
+externus functio scribe_bool(boolianus x) -> nullum.
+externus functio legge_int() -> integer.
+externus functio scribe_menu() -> nullum.
+externus functio chiede_int() -> nullum.
+externus functio annuncia_res() -> nullum.
+
+// FUNZIONE 1: Logica matematica
+functio calcola(integer op, integer a, integer b) -> integer {
+    si (op :: 1) { redde a + b. }
+    si (op :: 2) { redde a - b. }
+    si (op :: 3) { redde a * b. }
+    si (op :: 4) {
+        si (b :: 0) { redde 0. }
+        aliter { redde a / b. }
+    }
+    redde 0.
+}
+
+// FUNZIONE 2: Main
+principalis {
+
+    integer op : 0.
+    integer n1 : 0.
+    integer n2 : 0.
+    integer res : 0.
+    boolianus continua : verum.
+
+    dom (continua) {
+        // Ora chiamiamo la funzione C per il testo!
+        scribe_menu().
+
+        op : legge_int().
+
+        si (op :: 0) {
+            continua : falsum.
+        }
+        aliter {
+            // Se l'operazione non è valida (es. 5), saltiamo
+            si (op > 4) {
+
+            }
+            aliter {
+                chiede_int().
+                n1 : legge_int().
+                chiede_int().
+                n2 : legge_int().
+                res : calcola(op, n1, n2).
+                annuncia_res().
+                scribe_int(res).
+            }
+        }
+    }
+
+}
