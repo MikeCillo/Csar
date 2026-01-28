@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Csar.iml" filepath="$PROJECT_DIR$/Csar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/grammar/Csar.iml" filepath="$PROJECT_DIR$/.idea/grammar/Csar.iml" />
     </modules>
   </component>
 </project>
