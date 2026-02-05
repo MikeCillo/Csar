@@ -1,0 +1,4 @@
+principalis {
+    // Il Visitor controllerà: type(integer) != type(littera) -> CRASH.
+    integer numero : 'Z' .
+}

@@ -1,0 +1,14 @@
+externus functio scribe_int(integer x) -> nullum .
+
+principalis {
+    integer i : 5 .
+
+    // Conto alla rovescia: 5, 4, 3, 2, 1
+    dom (i > 0) {
+        scribe_int(i) .
+        i : i - 1 .
+    }
+
+    // Alla fine stampa 0 per confermare uscita dal ciclo
+    scribe_int(i) .
+}

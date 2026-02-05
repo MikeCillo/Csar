@@ -22,7 +22,7 @@ class SymbolTable:
         if kind == 'local':
             # 1. Controllo Shadowing (vietato nascondere globali)
             if name in self.global_scope:
-                raise SemanticError(f"Errore Shadowing: La variabile locale '{name}' nasconde una globale.")
+                raise SemanticError(f"Errore Shadowing: La variabile locale '{name}' ha il nome di una globale.")
             # 2. Controllo duplicati locali
             if name in self.local_scope:
                 raise SemanticError(f"Errore: Variabile locale '{name}' gia' dichiarata.")
@@ -42,6 +42,8 @@ class SymbolTable:
         return None
 
 class SemanticVisitor:
+
+    # --- CREAZIONE SYMBOL TABLE ---
     def __init__(self):
         self.symbol_table = SymbolTable()
 
@@ -65,7 +67,7 @@ class SemanticVisitor:
         for func in node.functions:
             self.symbol_table.define(func.name, func.return_type, 'global')
 
-        # 3. Visita Funzioni
+        # 3. Visita Funzioni RICORSIONE
         for func in node.functions:
             self.visit(func)
 
@@ -91,6 +93,8 @@ class SemanticVisitor:
             self.visit(stmt)
 
     # --- ISTRUZIONI ---
+
+
     def visit_VarDeclNode(self, node):
         if node.init_expr:
             expr_type = self.visit(node.init_expr)
@@ -149,13 +153,19 @@ class SemanticVisitor:
             if left == right: return 'boolianus'
             raise SemanticError(f"Errore '{op}': Tipi diversi {left}, {right}")
 
+
+  # -- RICORSIONE FERMA
+
+    # -- VALORE
     def visit_LiteralNode(self, node): return node.type_name
 
+    # -- TIPO VARIABILE
     def visit_VarExprNode(self, node):
         t = self.symbol_table.lookup(node.name)
         if not t: raise SemanticError(f"Variabile '{node.name}' non usata.")
         return t
 
+    # -- TIPO RITORNO FUNZIONE
     def visit_FunCallNode(self, node):
         t = self.symbol_table.lookup(node.name)
         if not t: raise SemanticError(f"Funzione '{node.name}' sconosciuta.")

@@ -1,0 +1,8 @@
+principalis {
+    integer x : 10 .
+
+    // ERRORE SINTATTICO:
+    // Manca il punto finale alla riga sotto
+    // Lark lancerà un "UnexpectedToken" o "UnexpectedInput"
+    integer y : 20
+}

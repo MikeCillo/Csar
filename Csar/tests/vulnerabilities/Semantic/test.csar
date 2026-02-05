@@ -1,0 +1,8 @@
+principalis {
+
+    integer x : 0.
+    littera y : 'a'.
+
+    x : x+y.
+
+}

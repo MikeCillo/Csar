@@ -1,0 +1,12 @@
+// Importiamo scribe_char dal runtime.c
+externus functio scribe_char(littera c) -> nullum .
+
+principalis {
+    littera a : 'O' .
+    littera b : 'K' .
+
+    // Stampa O
+    scribe_char(a) .
+    // Stampa K
+    scribe_char(b) .
+}

@@ -1,0 +1,5 @@
+functio calcola() -> integer {
+    // ERRORE: La funzione promette integer ma ritorna un carattere
+    redde 'C' .
+}
+principalis { }

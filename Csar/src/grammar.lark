@@ -4,7 +4,8 @@
 
 start: program
 
-// --- STRUTTURA ---
+ // ANALISI SINTATTICA PARSER
+// STRUTTURA
 program: external_decl_list function_decl_list main_block
 
 external_decl_list: external_decl*
@@ -48,7 +49,7 @@ return_stmt: "redde" expr? "."
 
 proc_call_stmt: ID "(" args_list? ")" "."
 
-// --- ESPRESSIONI ---
+// --- PRECEDENZA ESPRESSIONI ---
 ?expr: logic_or
 ?logic_or: logic_and ("||" logic_and)*
 ?logic_and: comp_expr ("&&" comp_expr)*
@@ -73,6 +74,8 @@ args_list: expr ("," expr)*
 !add_op: "+" | "-"
 !mul_op: "*" | "/"
 
+
+//LEXER- ANALISI LESSICALE
 // --- TOKEN DEFINIZIONI ---
 
 TYPE_INT: "integer"

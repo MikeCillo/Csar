@@ -1,0 +1,14 @@
+externus functio scribe_int(integer v) -> nullum .
+
+functio test() -> integer {
+    integer x : 100 . // Questa x è locale a 'test'
+    redde x .
+}
+
+principalis {
+    integer x : 5 .   // Questa x è locale a 'principalis'
+
+    scribe_int(x) .      // Deve stampare 5
+    scribe_int(test()) . // Deve stampare 100
+    scribe_int(x) .      // Deve stampare ancora 5 (non deve essere cambiata)
+}

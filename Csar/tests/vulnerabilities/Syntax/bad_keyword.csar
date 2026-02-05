@@ -1,0 +1,10 @@
+// ERRORE SINTATTICO:
+// La keyword corretta è 'functio' (minuscolo).
+// 'Function' non è definita nel Lexer, quindi verrà letta come un ID (identificatore),
+// ma un ID non può stare a inizio riga in quella posizione.
+
+Function somma(integer a) -> integer {
+    redde a .
+}
+
+principalis { }

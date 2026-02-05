@@ -1,7 +1,7 @@
 
 //  Prevenzione Shadowing
 
-// 1. Definiamo una funzione globale
+
 functio saluta() -> nullum {
     redde.
 }

@@ -1,0 +1,11 @@
+
+externus functio scribe_int(integer v) -> nullum .
+
+principalis {
+    integer a : 10 .
+    integer b : 20 .
+    integer ris : (a * b) + 5 .
+
+    // Stampa direttamente 205 usando la funzione del runtime
+    scribe_int(ris) .
+}

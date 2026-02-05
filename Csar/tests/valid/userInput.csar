@@ -1,0 +1,10 @@
+externus functio scribe_int(integer x) -> nullum .
+externus functio legge_int() -> integer .
+
+principalis {
+    // Il programma si ferma e aspetta un numero
+    integer n : legge_int() .
+
+    // Raddoppia il numero inserito e lo stampa
+    scribe_int(n * 2) .
+}

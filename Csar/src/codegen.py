@@ -2,6 +2,8 @@ from llvmlite import ir
 from ast_nodes import *
 
 class CodeGenVisitor:
+
+    # SETUP INIZIALE MODULO
     def __init__(self):
         self.module = ir.Module(name="csar_module")
         self.builder = None
@@ -73,10 +75,10 @@ class CodeGenVisitor:
             self.builder.store(arg, ptr)
             self.var_symtab[param_node.name] = ptr
 
-        # Genera corpo
+        # Genera corpo funzione
         self.visit(node.body)
 
-        # --- FIX: RETE DI SICUREZZA ---
+
         # Se il blocco finale non è terminato, aggiungiamo return
         if not self.builder.block.is_terminated:
             if node.return_type == 'nullum':
@@ -179,7 +181,9 @@ class CodeGenVisitor:
 
     def visit_ProcCallNode(self, node):
         func = self.func_symtab[node.name]
+        #Prepara gli argomenti
         args = [self.visit(arg) for arg in node.args]
+        # call i32 @somma(i32 6, i32 %x)
         self.builder.call(func, args)
 
     # --- ESPRESSIONI ---
@@ -208,6 +212,7 @@ class CodeGenVisitor:
         }
 
         if op in cmp_map:
+            # Genera: %cmptmp = icmp eq i32 %lhs, %rhs
             return self.builder.icmp_signed(cmp_map[op], lhs, rhs, name="cmptmp")
 
 
@@ -220,12 +225,15 @@ class CodeGenVisitor:
         elif node.type_name == 'boolianus':
             return ir.Constant(typ, 1 if val else 0)
         elif node.type_name == 'littera':
+            # val è stringa convertire in ASCII ord
             return ir.Constant(typ, ord(val) if isinstance(val, str) else val)
         elif node.type_name == 'nullum':
             return ir.Constant(typ, None)
 
     def visit_VarExprNode(self, node):
+        #recupera il puntatore alla variabile
         ptr = self.var_symtab[node.name]
+        # Genera: %val = load i32, i32* %x
         return self.builder.load(ptr, name=node.name)
 
     def visit_FunCallNode(self, node):
