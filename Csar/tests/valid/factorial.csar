@@ -1,11 +1,23 @@
+externus functio scribe_int(integer x) -> nullum .
 
-externus functio scribe_int(integer v) -> nullum .
+// Funzione ricorsiva per il calcolo del fattoriale
+functio factorial(integer n) -> integer {
+    // Caso base: se n <= 1, ritorna 1
+    si (n <= 1) {
+        redde 1 .
+    }
+
+    // Passo ricorsivo: n * factorial(n - 1)
+    redde n * factorial(n - 1) .
+}
 
 principalis {
-    integer a : 10 .
-    integer b : 20 .
-    integer ris : (a * b) + 5 .
+    integer numero : 5 .
+    integer risultato .
 
-    // Stampa direttamente 205 usando la funzione del runtime
-    scribe_int(ris) .
+    // Calcoliamo 5! (5 * 4 * 3 * 2 * 1 = 120)
+    risultato : factorial(numero) .
+
+    // Stampiamo
+    scribe_int(risultato) .
 }

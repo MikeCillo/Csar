@@ -31,6 +31,10 @@ void scribe_menu() {
     printf("=========================\n");
 }
 
+// errore divisone per 0 (calcolatrice)
+void scribe_error() {
+    printf("⚠ ERRORE: Non puoi dividere per zero!\n");
+}
 
 void chiede_int() {
     printf("Inserisci un numero intero: ");

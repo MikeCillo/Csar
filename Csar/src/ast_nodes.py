@@ -41,7 +41,7 @@ class ParamNode(Node):
 
 @dataclass
 class BodyNode(Node):
-    # Secondo la regola C89, separiamo dichiarazioni e statement
+    # separiamo dichiarazioni e statement
     var_decls: List['VarDeclNode']
     statements: List[Node]
 

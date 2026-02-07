@@ -13,7 +13,7 @@ COMPILARE
 python3 src/main.py tests/calcolatrice.csar
 
 LINK
-clang tests/calcolatrice.ll tests/runtime.c -o calcolatrice.
+clang tests/calcolatrice.ll tests/runtime.c -o calcolatrice
 
 ESEGUIRE
 ./calcolatrice

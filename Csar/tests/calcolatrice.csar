@@ -1,5 +1,6 @@
 // DICHIARAZIONI ESTERNE
 externus functio scribe_int(integer x) -> nullum.
+externus functio scribe_error() -> nullum.
 externus functio scribe_bool(boolianus x) -> nullum.
 externus functio legge_int() -> integer.
 externus functio scribe_menu() -> nullum.
@@ -12,7 +13,9 @@ functio calcola(integer op, integer a, integer b) -> integer {
     si (op :: 2) { redde a - b. }
     si (op :: 3) { redde a * b. }
     si (op :: 4) {
-        si (b :: 0) { redde 0. }
+        si (b :: 0) {
+        scribe_error().
+        redde 0. }
         aliter { redde a / b. }
     }
     redde 0.

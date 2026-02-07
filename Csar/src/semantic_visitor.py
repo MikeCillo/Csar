@@ -46,6 +46,8 @@ class SemanticVisitor:
     # --- CREAZIONE SYMBOL TABLE ---
     def __init__(self):
         self.symbol_table = SymbolTable()
+        # Set per tracciare le variabili inizializzate nella funzione corrente
+        self.initialized_vars = set()
 
     # --- VISITOR PATTERN CON RIFLESSIONE ---
     def visit(self, node):
@@ -76,15 +78,28 @@ class SemanticVisitor:
 
     def visit_FunctionNode(self, node):
         self.symbol_table.enter_function(node.name, node.return_type)
+
+        # Reset tracking variabili inizializzate
+        self.initialized_vars = set()
+
         for param in node.params:
             self.symbol_table.define(param.name, param.type_name, 'local')
+            # I parametri sono SEMPRE inizializzati perché arrivano da fuori
+            self.initialized_vars.add(param.name)
+
         self.visit(node.body)
         self.symbol_table.exit_function()
+        self.initialized_vars = set() # Pulizia finale
 
     def visit_MainNode(self, node):
         self.symbol_table.enter_function('principalis', 'nullum')
+
+        # Reset tracking variabili inizializzate
+        self.initialized_vars = set()
+
         self.visit(node.body)
         self.symbol_table.exit_function()
+        self.initialized_vars = set() # Pulizia finale
 
     def visit_BodyNode(self, node):
         for decl in node.var_decls:
@@ -94,12 +109,14 @@ class SemanticVisitor:
 
     # --- ISTRUZIONI ---
 
-
     def visit_VarDeclNode(self, node):
         if node.init_expr:
             expr_type = self.visit(node.init_expr)
             if expr_type != node.type_name:
                 raise SemanticError(f"Errore Tipo: '{node.name}' e' {node.type_name}, init con {expr_type}")
+
+            # Se c'è un'espressione di init, la variabile è inizializzata!
+            self.initialized_vars.add(node.name)
 
         scope = 'local' if self.symbol_table.local_scope is not None else 'global'
         self.symbol_table.define(node.name, node.type_name, scope)
@@ -112,6 +129,9 @@ class SemanticVisitor:
         expr_type = self.visit(node.expr)
         if var_type != expr_type:
             raise SemanticError(f"Errore Assegnamento: '{node.name}' ({var_type}) = {expr_type}")
+
+        # Assegnazione avvenuta -> Variabile inizializzata!
+        self.initialized_vars.add(node.name)
 
     def visit_IfNode(self, node):
         if self.visit(node.condition) != 'boolianus':
@@ -142,6 +162,10 @@ class SemanticVisitor:
         op = node.op
 
         if op in ['+', '-', '*', '/']: # Aritmetica (solo integer)
+
+            if op == '/' and hasattr(node.right, 'value') and node.right.value == 0:
+                 raise SemanticError("Errore Matematico: Divisione per zero!")
+
             if left == 'integer' and right == 'integer': return 'integer'
             raise SemanticError(f"Errore '{op}': Richiede integer, trovati {left}, {right}")
 
@@ -153,19 +177,27 @@ class SemanticVisitor:
             if left == right: return 'boolianus'
             raise SemanticError(f"Errore '{op}': Tipi diversi {left}, {right}")
 
+    # -- NODI FOGLIA --
 
-  # -- RICORSIONE FERMA
+    # -- VALORE LETTERALE (Numeri, Stringhe, Bool)
+    def visit_LiteralNode(self, node):
+        return node.type_name
 
-    # -- VALORE
-    def visit_LiteralNode(self, node): return node.type_name
-
-    # -- TIPO VARIABILE
+    # -- USO VARIABILE (Lettura)
     def visit_VarExprNode(self, node):
         t = self.symbol_table.lookup(node.name)
-        if not t: raise SemanticError(f"Variabile '{node.name}' non usata.")
+        if not t: raise SemanticError(f"Variabile '{node.name}' non dichiarata prima dell'uso.")
+
+        # --- CONTROLLO USO VARIABILE NON INIZIALIZZATA ---
+        # Se siamo in una funzione (local scope) e la variabile è locale
+        if self.symbol_table.local_scope and node.name in self.symbol_table.local_scope:
+            if node.name not in self.initialized_vars:
+                raise SemanticError(f"PERICOLO: Variabile locale '{node.name}' usata prima di essere inizializzata!")
+        # -------------------------------------------------
+
         return t
 
-    # -- TIPO RITORNO FUNZIONE
+    # -- CHIAMATA FUNZIONE
     def visit_FunCallNode(self, node):
         t = self.symbol_table.lookup(node.name)
         if not t: raise SemanticError(f"Funzione '{node.name}' sconosciuta.")

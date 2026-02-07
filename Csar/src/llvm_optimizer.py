@@ -5,12 +5,13 @@ def optimize_ir(ir_code_str):
     llvm.initialize_native_target()
     llvm.initialize_native_asmprinter()
 
+    #Leggi questo testo scritto in Assembly Virtuale LLVM
     mod = llvm.parse_assembly(ir_code_str)
     mod.verify()
 
     pm_builder = llvm.create_pass_manager_builder()
     pm_builder.opt_level = 3  # Livello massimo!
-    pm_builder.inlining_threshold = 100
+    pm_builder.inlining_threshold = 100 #istruzioni max
 
     pass_manager = llvm.create_module_pass_manager()
     pm_builder.populate(pass_manager)

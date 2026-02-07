@@ -51,6 +51,8 @@ class CodeGenVisitor:
         # 4. Genera Main
         self.visit(node.main)
 
+
+        #FUNZIONE ESTERNA
     def visit_ExternNode(self, node):
         ret_type = self.types[node.return_type]
         arg_types = [self.types[p.type_name] for p in node.params]
@@ -191,6 +193,35 @@ class CodeGenVisitor:
         lhs = self.visit(node.left)
         rhs = self.visit(node.right)
         op = node.op
+
+
+        # --- GESTIONE DIVISIONE PER ZERO
+        if op == '/':
+            # 1. Crea i blocchi: Uno per l'errore, uno per continuare
+            func = self.builder.block.function
+            err_block = func.append_basic_block(name="crash")
+            ok_block = func.append_basic_block(name="ok")
+
+            # 2. Controlla se è 0
+            is_zero = self.builder.icmp_signed('==', rhs, ir.Constant(rhs.type, 0))
+            self.builder.cbranch(is_zero, err_block, ok_block)
+
+            # --- CASO ERRORE: Chiama exit(1) ---
+            self.builder.position_at_start(err_block)
+
+            # Dichiariamo 'exit'
+            if "exit" not in self.module.globals:
+                ftype = ir.FunctionType(ir.VoidType(), [ir.IntType(32)])
+                ir.Function(self.module, ftype, name="exit")
+
+            # Chiama exit(1) -> Il programma muore qui.
+            self.builder.call(self.module.globals["exit"], [ir.Constant(ir.IntType(32), 1)])
+            self.builder.unreachable()
+
+            # --- CASO OK: Dividi ---
+            self.builder.position_at_start(ok_block)
+            return self.builder.sdiv(lhs, rhs, name="divtmp")
+
 
         if op == '+': return self.builder.add(lhs, rhs, name="addtmp")
         if op == '-': return self.builder.sub(lhs, rhs, name="subtmp")

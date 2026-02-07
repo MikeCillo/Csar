@@ -1,8 +1,9 @@
+externus functio scribe_int(integer x) -> nullum .
+
 principalis {
+    integer a : 100 .
+    integer b : 5.
 
-    integer x : 0.
-    littera y : 'a'.
-
-    x : x+y.
-
+    a : a / b.
+    scribe_int(a) . // Deve stampare 20
 }
